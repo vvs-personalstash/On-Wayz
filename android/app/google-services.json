@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "480620787495",
+    "project_id": "on-ways",
+    "storage_bucket": "on-ways.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:480620787495:android:dfd90fbaa42243c7e09b02",
+        "android_client_info": {
+          "package_name": "com.example.on_ways"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "480620787495-1kj6fr0v2mo99tk43bn1vu0lprp15lni.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.on_ways",
+            "certificate_hash": "a70940c875fb070eabc65b93748cbabb8821e9c0"
+          }
+        },
+        {
+          "client_id": "480620787495-aea9590gpv2qdbeh8qqm5ki8go8vr3tm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvvaeTuhER0QEzzz5lf-n4vLqIhOwe0zM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "480620787495-aea9590gpv2qdbeh8qqm5ki8go8vr3tm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
