@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:on_ways/authentication/register.dart';
+import 'package:on_ways/screens/scaffold_screen.dart';
 import 'package:on_ways/utilities/custom_button.dart';
+import 'package:on_ways/authentication/authenticaation.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginPage extends StatelessWidget {
   static const routename = '/login';
@@ -8,6 +15,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dimensions = MediaQuery.of(context).size;
+
     return SafeArea(
         child: Scaffold(
       body: Container(
@@ -19,9 +27,28 @@ class LoginPage extends StatelessWidget {
           ),
           child: Center(
             child: CustomButton(
-                dimensions: dimensions,
-                label: 'Login with Google',
-                action: () {}),
+              dimensions: dimensions,
+              label: 'Login with Google',
+              action: () async {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                await provider.googleLogin();
+                final user = FirebaseAuth.instance.currentUser;
+                final _firestore = FirebaseFirestore.instance;
+                final user_credentials =
+                    _firestore.collection("User-Data").doc('${user!.uid}');
+                debugPrint(user!.email);
+                user_credentials.get().then((DocumentSnapshot snapshot) {
+                  if (snapshot.exists) {
+                    Navigator.pushReplacementNamed(
+                        context, HomeScreen.routename);
+                  } else {
+                    Navigator.pushReplacementNamed(
+                        context, SignUpPage.routename);
+                  }
+                });
+              },
+            ),
           )),
     ));
   }
