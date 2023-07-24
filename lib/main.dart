@@ -5,7 +5,8 @@ import 'authentication/login.dart';
 import 'screens/loading.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
-import 'authentication/authenticaation.dart';
+import 'Providers/authenticaation.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,24 +26,59 @@ class MyApp extends StatelessWidget {
           ],
           child: MaterialApp(
             title: 'Flutter Demo',
-            theme: ThemeData(
-              // This is the theme of your application.
-              //
-              // TRY THIS: Try running your application with "flutter run". You'll see
-              // the application has a blue toolbar. Then, without quitting the app,
-              // try changing the seedColor in the colorScheme below to Colors.green
-              // and then invoke "hot reload" (save your changes or press the "hot
-              // reload" button in a Flutter-supported IDE, or press "r" if you used
-              // the command line to start the app).
-              //
-              // Notice that the counter didn't reset back to zero; the application
-              // state is not lost during the reload. To reset the state, use hot
-              // restart instead.
-              //
-              // This works for code too, not just values: Most code changes can be
-              // tested with just a hot reload.
-              colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
-              useMaterial3: true,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData.light().copyWith(
+              // dialogBackgroundColor: const Color.fromRGBO(37, 42, 52, 1),
+              scaffoldBackgroundColor: Color.fromARGB(255, 247, 248, 255),
+              primaryColor: Color.fromARGB(255, 223, 206, 152),
+              appBarTheme: const AppBarTheme(
+                color: Color.fromRGBO(255, 255, 255, 1),
+                shadowColor: Colors.black87, // Change the AppBar color
+                elevation: 8,
+              ),
+              textSelectionTheme: const TextSelectionThemeData(
+                cursorColor: Color.fromARGB(
+                    255, 242, 209, 213), // Set the desired cursor color
+              ),
+              inputDecorationTheme: const InputDecorationTheme(
+                // labelStyle: TextStyle(
+                //   color: Color.fromARGB(
+                //       255, 114, 122, 226), // Set the desired label color
+                // ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: Color.fromARGB(255, 29, 45, 89),
+                  ), // Set the desired underline color for active text fields
+                ),
+              ),
+              dialogTheme: DialogTheme(
+                backgroundColor: Color.fromARGB(
+                    255, 255, 255, 255), //Color.fromARGB(255, 114, 122, 226),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      20.0), // Set the desired border radius here
+                ),
+              ),
+              bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+                selectedIconTheme: IconThemeData(
+                  color: Color(0xFF1d2d59),
+                ),
+                selectedItemColor: Color(0xFF1d2d59),
+                backgroundColor: Color.fromRGBO(236, 234, 214, 1),
+                elevation: 20,
+              ),
+              cardTheme: CardTheme(
+                color: Color.fromARGB(92, 253, 253, 253),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(26),
+                ),
+              ),
+              textTheme:
+                  GoogleFonts.nunitoTextTheme(ThemeData.dark().textTheme),
+              iconTheme: const IconThemeData(
+                color: Color(0xFF1d2d59),
+              ),
             ),
             routes: {
               '/': (context) => LoadingScreen(),

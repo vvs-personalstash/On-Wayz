@@ -23,70 +23,71 @@ class SignUpPage extends StatelessWidget {
     debugPrint(user.email);
     return SafeArea(
         child: Scaffold(
+            resizeToAvoidBottomInset: true,
             body: Container(
-      height: dimensions.height,
-      width: dimensions.width,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("Assets/background.jpg"),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            height: dimensions.height * 0.3,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          CustomTextField(
-            label: 'Full Name',
-            iconData: Icons.person,
-            textEditingController: nameController,
-          ),
-          CustomTextField(
-            label: 'User Name',
-            iconData: Icons.person,
-            textEditingController: usernameController,
-          ),
-          IntlPhoneField(
-            controller: phoneController,
-            decoration: InputDecoration(
-              labelText: 'Phone Number',
-              border: OutlineInputBorder(
-                borderSide: BorderSide(),
+              height: dimensions.height,
+              width: dimensions.width,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("Assets/background.jpg"),
+                  fit: BoxFit.cover,
+                ),
               ),
-              fillColor: Colors.white,
-            ),
-            initialCountryCode: 'IN',
-            onCountryChanged: (value) {
-              countrycode = value.toString();
-            },
-          ),
-          CustomButton(
-              dimensions: dimensions,
-              label: 'Sign Up',
-              action: () async {
-                var db = FirebaseFirestore.instance;
-                final userData = {
-                  "UserName": usernameController.text,
-                  "phonenumber": countrycode + phoneController.text,
-                  "Last Location": GeoPoint(0, 0),
-                };
-                db.collection("User-Data").doc(user.uid).set(userData);
-                await user.updateDisplayName(usernameController.text);
-                await user.updatePhotoURL(
-                    "https://example.com/jane-q-user/profile.jpg");
-                await user.updateDisplayName(nameController.text);
-                if (!context.mounted) return;
-                Navigator.pushNamedAndRemoveUntil(
-                    context, HomeScreen.routename, (route) => false);
-              }),
-        ],
-      ),
-    )));
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: dimensions.height * 0.3,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CustomTextField(
+                    label: 'Full Name',
+                    iconData: Icons.person,
+                    textEditingController: nameController,
+                  ),
+                  CustomTextField(
+                    label: 'User Name',
+                    iconData: Icons.person,
+                    textEditingController: usernameController,
+                  ),
+                  IntlPhoneField(
+                    controller: phoneController,
+                    decoration: InputDecoration(
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(),
+                      ),
+                      fillColor: Colors.white,
+                    ),
+                    initialCountryCode: 'IN',
+                    onCountryChanged: (value) {
+                      countrycode = value.toString();
+                    },
+                  ),
+                  CustomButton(
+                      dimensions: dimensions,
+                      label: 'Sign Up',
+                      action: () async {
+                        var db = FirebaseFirestore.instance;
+                        final userData = {
+                          "UserName": usernameController.text,
+                          "phonenumber": countrycode + phoneController.text,
+                          "Last Location": GeoPoint(0, 0),
+                        };
+                        db.collection("User-Data").doc(user.uid).set(userData);
+                        await user.updateDisplayName(usernameController.text);
+                        await user.updatePhotoURL(
+                            "https://example.com/jane-q-user/profile.jpg");
+                        await user.updateDisplayName(nameController.text);
+                        if (!context.mounted) return;
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, HomeScreen.routename, (route) => false);
+                      }),
+                ],
+              ),
+            )));
   }
 }

@@ -8,7 +8,7 @@ import 'package:on_ways/tabs/Maps.dart';
 import 'package:on_ways/tabs/UserProfile.dart';
 import 'package:on_ways/tabs/communitytab.dart';
 import 'package:provider/provider.dart';
-import 'package:on_ways/authentication/authenticaation.dart';
+import 'package:on_ways/Providers/authenticaation.dart';
 import 'package:cupertino_icons/cupertino_icons.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,8 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           title: Text(
             'On Wayz',
-            style:
-                Theme.of(context).textTheme.titleLarge!.copyWith(fontSize: 24),
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                fontSize: 24,
+                color: Color(0xFF1d2d59),
+                fontWeight: FontWeight.w700),
           ),
           centerTitle: true,
         ),

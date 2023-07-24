@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:on_ways/authentication/register.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';
 import 'package:on_ways/utilities/custom_button.dart';
-import 'package:on_ways/authentication/authenticaation.dart';
+import 'package:on_ways/Providers/authenticaation.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
