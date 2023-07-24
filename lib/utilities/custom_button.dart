@@ -18,8 +18,8 @@ class CustomButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(colors: [
-          Color.fromRGBO(193, 81, 166, 1),
-          Color.fromRGBO(247, 109, 78, 1),
+          Color.fromRGBO(25, 28, 77, 1),
+          Color.fromRGBO(255, 255, 255, 1),
           // Theme.of(context).colorScheme.primary
         ], begin: Alignment.topLeft, end: Alignment.bottomRight),
         borderRadius: BorderRadius.circular(13),

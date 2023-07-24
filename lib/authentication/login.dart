@@ -37,16 +37,20 @@ class LoginPage extends StatelessWidget {
                 final _firestore = FirebaseFirestore.instance;
                 final user_credentials =
                     _firestore.collection("User-Data").doc('${user!.uid}');
-                debugPrint(user!.email);
-                user_credentials.get().then((DocumentSnapshot snapshot) {
-                  if (snapshot.exists) {
-                    Navigator.pushReplacementNamed(
-                        context, HomeScreen.routename);
-                  } else {
-                    Navigator.pushReplacementNamed(
-                        context, SignUpPage.routename);
-                  }
-                });
+                debugPrint(user.email);
+
+                user_credentials.get().then((docSnapshot) => {
+                      if (docSnapshot.exists)
+                        {
+                          Navigator.pushReplacementNamed(
+                              context, HomeScreen.routename)
+                        }
+                      else
+                        {
+                          Navigator.pushReplacementNamed(
+                              context, SignUpPage.routename)
+                        }
+                    });
               },
             ),
           )),

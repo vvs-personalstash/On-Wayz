@@ -4,6 +4,7 @@ import 'package:http/http.dart';
 import 'package:on_ways/authentication/login.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:on_ways/screens/scaffold_screen.dart';
 
 class LoadingScreen extends StatelessWidget {
   LoadingScreen({super.key});
@@ -16,7 +17,7 @@ class LoadingScreen extends StatelessWidget {
       print(1);
       Navigator.pushReplacementNamed(context, LoginPage.routename);
     } else {
-      return;
+      Navigator.pushReplacementNamed(context, HomeScreen.routename);
     }
   }
 
