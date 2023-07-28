@@ -22,7 +22,7 @@ class CustomTextField extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 25),
       padding: const EdgeInsets.only(left: 15, right: 15, bottom: 8),
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(37, 42, 52, 1),
+        color: Color.fromARGB(255, 255, 255, 255),
         borderRadius: BorderRadius.circular(17),
       ),
       child: Row(
@@ -31,7 +31,7 @@ class CustomTextField extends StatelessWidget {
               margin: const EdgeInsets.only(right: 10),
               child: Icon(
                 iconData,
-                color: Colors.white.withOpacity(0.7),
+                color: Color.fromARGB(255, 242, 209, 213),
               )),
           Expanded(
             child: TextField(

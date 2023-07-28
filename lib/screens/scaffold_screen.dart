@@ -29,10 +29,13 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () async {
               final provider =
                   Provider.of<GoogleSignInProvider>(context, listen: false);
-              await provider.googleLogin();
+              await provider.googleLogout();
               Navigator.popAndPushNamed(context, LoginPage.routename);
             },
-            icon: const Icon(Icons.arrow_back),
+            icon: const Icon(
+              Icons.power_settings_new,
+              color: Color(0xFF1d2d59),
+            ),
           ),
           title: Text(
             'On Wayz',
@@ -92,8 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
           index: selectedIndex,
           children: const [
             MapScreen(),
-            CommunityTab(),
             ChatScreen(),
+            CommunityTab(),
             UserProfile(),
           ],
         ),

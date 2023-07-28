@@ -40,32 +40,43 @@ class SignUpPage extends StatelessWidget {
                   SizedBox(
                     height: dimensions.height * 0.3,
                   ),
-                  SizedBox(
-                    height: 10,
-                  ),
                   CustomTextField(
                     label: 'Full Name',
                     iconData: Icons.person,
                     textEditingController: nameController,
+                  ),
+                  SizedBox(
+                    height: 10,
                   ),
                   CustomTextField(
                     label: 'User Name',
                     iconData: Icons.person,
                     textEditingController: usernameController,
                   ),
-                  IntlPhoneField(
-                    controller: phoneController,
-                    decoration: InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(),
-                      ),
-                      fillColor: Colors.white,
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 25),
+                    padding:
+                        const EdgeInsets.only(left: 15, right: 15, bottom: 5),
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 255, 255, 255),
+                      borderRadius: BorderRadius.circular(17),
                     ),
-                    initialCountryCode: 'IN',
-                    onCountryChanged: (value) {
-                      countrycode = value.toString();
-                    },
+                    child: IntlPhoneField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                        labelText: 'Phone Number',
+                        border: InputBorder.none,
+                        fillColor: Colors.white,
+                        filled: true,
+                      ),
+                      initialCountryCode: 'IN',
+                      onCountryChanged: (value) {
+                        countrycode = value.toString();
+                      },
+                    ),
                   ),
                   CustomButton(
                       dimensions: dimensions,
