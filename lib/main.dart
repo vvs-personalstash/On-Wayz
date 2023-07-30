@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:on_ways/Networking/image.dart';
 import 'package:on_ways/authentication/register.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';
-import 'authentication/login.dart';
+import 'authentication/login_google.dart';
 import 'screens/loading.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'Providers/authenticaation.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dotenv.load();
   runApp(const MyApp());
 }
 
@@ -85,6 +88,7 @@ class MyApp extends StatelessWidget {
               LoginPage.routename: (context) => const LoginPage(),
               SignUpPage.routename: (context) => SignUpPage(),
               HomeScreen.routename: (context) => const HomeScreen(),
+              ImageUploadScreen.routename: (context) => ImageUploadScreen(),
             },
           ));
 }
