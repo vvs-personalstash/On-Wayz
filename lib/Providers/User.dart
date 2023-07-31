@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User with ChangeNotifier {
+class Users with ChangeNotifier {
   String id = '';
   String email = '';
   String name = '';
@@ -15,7 +15,7 @@ class User with ChangeNotifier {
   GeoPoint Location = GeoPoint(0, 0);
   List<dynamic> chats_id = [];
 
-  void update({required dynamic data}) async {
+  void update() async {
     final user = await FirebaseAuth.instance.currentUser;
     final _firestore = await FirebaseFirestore.instance;
     id = await user!.uid;

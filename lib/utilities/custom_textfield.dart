@@ -5,6 +5,7 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final IconData iconData;
   final String hint;
+  final dynamic Keyboard;
   // final VoidCallback onTap;
 
   const CustomTextField({
@@ -13,6 +14,7 @@ class CustomTextField extends StatelessWidget {
     required this.iconData,
     // required this.onTap,
     this.hint = '',
+    this.Keyboard = TextInputType.text,
     Key? key,
   }) : super(key: key);
 
@@ -43,6 +45,7 @@ class CustomTextField extends StatelessWidget {
               ),
               controller: textEditingController,
               autofillHints: gethints(label),
+              keyboardType: Keyboard,
             ),
           ),
         ],

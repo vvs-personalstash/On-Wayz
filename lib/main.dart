@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:on_ways/Networking/image.dart';
+import 'package:on_ways/Providers/User.dart';
 import 'package:on_ways/authentication/register.dart';
+import 'package:on_ways/screens/blogscreen.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';
 import 'authentication/login_google.dart';
 import 'screens/loading.dart';
@@ -26,6 +28,7 @@ class MyApp extends StatelessWidget {
           providers: [
             ChangeNotifierProvider(
                 create: ((context) => GoogleSignInProvider())),
+            ChangeNotifierProvider(create: ((context) => Users()))
           ],
           child: MaterialApp(
             title: 'Flutter Demo',
@@ -78,7 +81,7 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               textTheme:
-                  GoogleFonts.nunitoTextTheme(ThemeData.dark().textTheme),
+                  GoogleFonts.nunitoTextTheme(ThemeData.light().textTheme),
               iconTheme: const IconThemeData(
                 color: Color(0xFF1d2d59),
               ),
@@ -89,6 +92,7 @@ class MyApp extends StatelessWidget {
               SignUpPage.routename: (context) => SignUpPage(),
               HomeScreen.routename: (context) => const HomeScreen(),
               ImageUploadScreen.routename: (context) => ImageUploadScreen(),
+              BlogScreen.routeName: (context) => BlogScreen(),
             },
           ));
 }

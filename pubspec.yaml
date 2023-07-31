@@ -50,6 +50,7 @@ dependencies:
   geolocator: ^9.0.2
   intl: ^0.18.1
   cloudinary_url_gen: ^1.0.0
+  like_button: ^2.0.5
 
 dev_dependencies:
   flutter_test:

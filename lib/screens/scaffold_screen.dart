@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:on_ways/authentication/login.dart';
+import 'package:on_ways/authentication/login_google.dart';
 import 'package:on_ways/tabs/Chats.dart';
 import 'package:on_ways/tabs/Maps.dart';
 import 'package:on_ways/tabs/UserProfile.dart';

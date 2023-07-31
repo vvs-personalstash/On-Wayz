@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart';
@@ -141,14 +142,16 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
                         ),
                         onPressed: () async {
                           bool isValid = _formKey.currentState!.validate();
+
                           if (isValid) {
+                            var db = FirebaseFirestore.instance;
                           } else {
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(
                                 title: const Text('Invalid Input'),
                                 content: const Text(
-                                    "Make sure to enter all the required fields"),
+                                    "Make sure o enter all the required fields"),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

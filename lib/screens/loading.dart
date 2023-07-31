@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
-import 'package:on_ways/authentication/login.dart';
+import 'package:on_ways/authentication/login_google.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';

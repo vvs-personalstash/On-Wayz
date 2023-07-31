@@ -67,7 +67,7 @@ class _ImageUploadScreenState extends State<ImageUploadScreen> {
             imageUrl != 'no data'
                 ? Image.network(imageUrl)
                 : Text('No image selected'),
-            imageUrl != 'no data'
+            imageUrl == 'no data'
                 ? ElevatedButton(
                     onPressed: _uploadImage,
                     child: Text('Select and Upload Image 1 time only'),
