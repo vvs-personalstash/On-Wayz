@@ -2,11 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart';
+import 'package:on_ways/Networking/image.dart';
 import 'package:provider/provider.dart';
+import 'package:on_ways/Providers/User.dart';
 
 class AddCommunityPostScreen extends StatefulWidget {
   const AddCommunityPostScreen({super.key});
-
   @override
   State<AddCommunityPostScreen> createState() => _AddCommunityPostScreenState();
 }
@@ -16,12 +17,13 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
 
   final _titleController = TextEditingController();
   final _cityController = TextEditingController();
-  final _urlController = TextEditingController();
   final _contentController = TextEditingController();
   bool initialValue = false;
+  String imageUrl = 'No Image';
 
   @override
   Widget build(BuildContext context) {
+    var dimensions = MediaQuery.of(context).size;
     return SafeArea(
         child: Scaffold(
       body: SingleChildScrollView(
@@ -32,9 +34,48 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
             Padding(
               padding: EdgeInsets.all(8.0),
               child: AppBar(
-                title: Text('Add Post'),
+                title: Text(
+                  'Add Post',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
             ),
+            GestureDetector(
+                onTap: () async {
+                  var NewimageUrl = await Navigator.of(context)
+                      .pushNamed(ImageUploadScreen.routename) as String;
+                  if (NewimageUrl != Null) {
+                    setState(() {
+                      imageUrl = NewimageUrl;
+                      print(imageUrl);
+                    });
+                  }
+                },
+                child: Container(
+                  height: dimensions.height * 0.2,
+                  width: dimensions.height * 0.7,
+                  padding:
+                      EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 10),
+                  margin:
+                      EdgeInsets.only(left: 10, right: 20, top: 20, bottom: 10),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    color: Colors.black.withOpacity(0.7),
+                  ),
+                  child: imageUrl != 'No Image'
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(25),
+                          child: Image.network(
+                            imageUrl,
+                            fit: BoxFit.fill,
+                          ),
+                        )
+                      : Icon(
+                          Icons.camera_alt_outlined,
+                          color: Colors.white,
+                          size: 50,
+                        ),
+                )),
             const SizedBox(
               height: 25,
             ),
@@ -70,38 +111,6 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
                         return null;
                       },
                     ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextFormField(
-                            enabled: initialValue,
-                            controller: _urlController,
-                            decoration: const InputDecoration(
-                              label: Text('Image url'),
-                            ),
-                            validator: (value) {
-                              if (initialValue) {
-                                if (value!.isEmpty) {
-                                  return 'jab kuch bharna nhi tha tab switch on hi kyu kiye';
-                                }
-                                return null;
-                              }
-                              return null;
-                            }, //this is wow
-                          ),
-                        ),
-                        const SizedBox(width: 26),
-                        Switch(
-                          activeColor: const Color(0xFFd988a1),
-                          value: initialValue,
-                          onChanged: (value) {
-                            setState(() {
-                              initialValue = value;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
                     const SizedBox(
                       height: 25,
                     ),
@@ -109,7 +118,7 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
                       padding:
                           const EdgeInsets.only(left: 15, right: 15, bottom: 0),
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(37, 42, 52, 1),
+                        color: Color.fromARGB(255, 244, 245, 248),
                         borderRadius: BorderRadius.circular(17),
                       ),
                       child: TextFormField(
@@ -144,7 +153,21 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
                           bool isValid = _formKey.currentState!.validate();
 
                           if (isValid) {
-                            var db = FirebaseFirestore.instance;
+                            final _db = FirebaseFirestore.instance;
+                            _db
+                                .collection('feed')
+                                .add({
+                                  'author': context.watch<Users>().name,
+                                  'title': _titleController.text,
+                                  'content': _contentController.text,
+                                  'location': _cityController.text,
+                                  'time': DateTime.now(),
+                                  'img': imageUrl,
+                                  'Likes': [],
+                                })
+                                .then((value) => print("Feed Added"))
+                                .catchError((error) =>
+                                    print("Failed to add Feed: $error"));
                           } else {
                             showDialog(
                               context: context,
