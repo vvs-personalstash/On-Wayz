@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:on_ways/Providers/Community_provider.dart';
 import 'package:on_ways/screens/AddCommunityPost.dart';
+import 'package:on_ways/screens/add_comment_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:like_button/like_button.dart';
 import 'package:animations/animations.dart';
@@ -45,7 +46,7 @@ class BlogScreen extends StatelessWidget {
               color: Color.fromARGB(255, 216, 216, 216),
             ),
           ),
-          openBuilder: (context, action) => const AddCommunityPostScreen(),
+          openBuilder: (context, action) => AddCommentScreen(FeedId: data.id),
         ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(

@@ -53,46 +53,45 @@ class _CommunityTabState extends State<CommunityTab> {
         ),
         body: SafeArea(
             child: Column(children: [
-          Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                  stream:
-                      _firestore.collection('feed').orderBy('time').snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          backgroundColor: Colors.lightBlueAccent,
-                        ),
-                      );
-                    }
+          StreamBuilder<QuerySnapshot>(
+              stream: _firestore.collection('feed').orderBy('time').snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.lightBlueAccent,
+                    ),
+                  );
+                }
 
-                    final postdata = snapshot.data?.docs;
-                    List<BlogCard> FeedWidgets = [];
-                    for (var data in postdata!) {
-                      CommunityPost post = CommunityPost(
-                        id: data.id,
-                        Likes: List<String>.from(data['Likes']),
-                        author: data['author'],
-                        title: data['title'],
-                        date: data['time'].toDate(),
-                        city: data['location'],
-                        content: data['content'],
-                        image_url: data['img'],
-                      );
-                      final time = data['time'].toDate();
-                      FeedWidgets.add(BlogCard(
-                        receivedData: post,
-                        time: time,
-                      ));
+                final postdata = snapshot.data?.docs;
+                List<BlogCard> FeedWidgets = [];
+                for (var data in postdata!) {
+                  CommunityPost post = CommunityPost(
+                    id: data.id,
+                    Likes: List<String>.from(data['Likes']),
+                    author: data['author'],
+                    title: data['title'],
+                    date: data['time'].toDate(),
+                    city: data['location'],
+                    content: data['content'],
+                    image_url: data['img'],
+                  );
+                  final time = data['time'].toDate();
+                  FeedWidgets.add(BlogCard(
+                    receivedData: post,
+                    time: time,
+                  ));
 
-                      FeedWidgets.sort((a, b) => a.time.compareTo(b.time));
-                    }
-                    return Expanded(
-                        child: ListView(
-                      children: FeedWidgets,
-                      controller: scrollController,
-                    ));
-                  }))
+                  FeedWidgets.sort((a, b) => a.time.compareTo(b.time));
+                }
+                return Expanded(
+                  child: ListView(
+                    children: FeedWidgets,
+                    controller: scrollController,
+                  ),
+                );
+              })
         ])));
   }
 }

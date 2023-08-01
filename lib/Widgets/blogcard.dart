@@ -48,15 +48,12 @@ class _BlogCardState extends State<BlogCard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.receivedData.image_url != Null)
-              Container(
-                  // padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        topRight: Radius.circular(15)),
-                  ),
-                  child: Image.network(widget.receivedData.image_url,
-                      fit: BoxFit.fill)),
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    widget.receivedData.image_url,
+                    fit: BoxFit.fill,
+                  )),
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
@@ -89,7 +86,7 @@ class _BlogCardState extends State<BlogCard> {
                       Icons.account_circle,
                       size: 35,
                     ),
-                    title: Text(widget.receivedData.content,
+                    title: Text(widget.receivedData.author,
                         style: Theme.of(context) //3
                             .textTheme
                             .titleMedium!
