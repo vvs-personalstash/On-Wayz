@@ -153,11 +153,13 @@ class _AddCommunityPostScreenState extends State<AddCommunityPostScreen> {
                           bool isValid = _formKey.currentState!.validate();
 
                           if (isValid) {
+                            Users user =
+                                Provider.of<Users>(context, listen: false);
                             final _db = FirebaseFirestore.instance;
                             _db
                                 .collection('feed')
                                 .add({
-                                  'author': context.watch<Users>().name,
+                                  'author': user.name,
                                   'title': _titleController.text,
                                   'content': _contentController.text,
                                   'location': _cityController.text,

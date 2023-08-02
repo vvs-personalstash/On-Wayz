@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:on_ways/Providers/User.dart';
 import 'package:provider/provider.dart';
 import 'package:on_ways/Widgets/custom_appbar.dart';
 
@@ -15,8 +16,6 @@ class AddCommentScreen extends StatefulWidget {
 class _AddCommentScreenState extends State<AddCommentScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  final _titleController = TextEditingController();
-  final _cityController = TextEditingController();
   final _contentController = TextEditingController();
   bool initialValue = false;
 
@@ -48,7 +47,7 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                       padding:
                           const EdgeInsets.only(left: 15, right: 15, bottom: 0),
                       decoration: BoxDecoration(
-                        color: const Color.fromRGBO(37, 42, 52, 1),
+                        color: Color.fromARGB(255, 226, 151, 197),
                         borderRadius: BorderRadius.circular(17),
                       ),
                       child: TextFormField(
@@ -92,15 +91,16 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                             //       "content": _contentController.text,
                             //       "city": _cityController.text
                             //     });
+                            Users user =
+                                Provider.of<Users>(context, listen: false);
                             final _firestore = FirebaseFirestore.instance;
                             _firestore
                                 .collection('feed')
                                 .doc(widget.FeedId)
                                 .collection('comments')
                                 .add({
-                                  'title': _titleController,
-                                  'content': _contentController,
-                                  'location': _cityController,
+                                  'author': user.name,
+                                  'content': _contentController.text,
                                   'time': DateTime.now(),
                                 })
                                 .then((value) => print("Comment Added"))

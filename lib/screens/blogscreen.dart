@@ -57,7 +57,7 @@ class BlogScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Post(data: data),
-                Comments(),
+                Comments(postId: data.id),
               ],
             ),
           ),
@@ -68,10 +68,8 @@ class BlogScreen extends StatelessWidget {
 }
 
 class Comments extends StatelessWidget {
-  const Comments({
-    super.key,
-  });
-
+  Comments({super.key, required this.postId});
+  String postId;
   final List comments = const [
     {
       "student": "Ravi Maurya",
@@ -85,97 +83,142 @@ class Comments extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _firestore = FirebaseFirestore.instance;
     return Padding(
       padding: const EdgeInsets.all(16.0),
-      child: ListView.builder(
-        shrinkWrap: true,
-        primary: false,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: comments.length,
-        itemBuilder: (context, index) {
-          bool tap = false;
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                children: [
-                  const Icon(
-                    Icons.person,
-                    size: 20,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Text(
-                    '${comments[index]['student']}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall!
-                        .copyWith(fontWeight: FontWeight.w600),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-              const SizedBox(
-                height: 6,
-              ),
-              Builder(builder: (context) {
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 0, 12, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${comments[index]['comment']}',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                            color: const Color.fromARGB(255, 217, 215, 215)),
-                        textAlign: TextAlign.left,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Spacer(),
-                          Text('${comments[index]['upvotes']}'),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              if (tap == false) {
-                                // setState(() {
-                                //   comments[index]['upvotes']++;
-                                //   tap = true;
-                                // });
-                              }
-                            },
-                            child: Icon(
-                              tap
-                                  ? Icons.thumb_up
-                                  : Icons.thumb_up_alt_outlined,
-                              size: 15.0,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              }),
-              const Divider(
-                thickness: 0.9,
-                height: 30,
-              ),
-            ],
+      child: StreamBuilder<QuerySnapshot>(
+          stream: _firestore
+              .collection('feed')
+              .doc(postId)
+              .collection('comments')
+              .orderBy('time')
+              .snapshots(includeMetadataChanges: true),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+            if (snapshot.hasError) {
+              return Container();
+            }
+            if (snapshot.data == null) {
+              return Center(
+                child: Container(),
+              );
+            }
+            final postdata = snapshot.data?.docs;
+            List<CommentWidget> FeedWidgets = [];
+            for (var data in postdata!) {
+              final time = data['time'].toDate();
+              FeedWidgets.add(CommentWidget(
+                commentContent: data['content'],
+                commentName: data['author'],
+                time: data['time'],
+              ));
+              FeedWidgets.sort((a, b) => b.time.compareTo(a.time));
+            }
+            return ListView(
+              shrinkWrap: true,
+              children: FeedWidgets,
+            );
+          }),
+    );
+  }
+}
+
+class CommentWidget extends StatelessWidget {
+  CommentWidget(
+      {super.key,
+      required this.commentName,
+      required this.commentContent,
+      required this.time});
+  var commentName;
+  var commentContent;
+  var time;
+  //var upvotes=[];
+  //var postId;
+  //String CommentId;
+  @override
+  Widget build(BuildContext context) {
+    // var istapped=upvotes.contains(context.watch<Users>().id);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: [
+            const Icon(
+              Icons.person,
+              size: 20,
+            ),
+            const SizedBox(
+              width: 8,
+            ),
+            Text(
+              '${commentName}',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall!
+                  .copyWith(fontWeight: FontWeight.w600),
+            ),
+            const Spacer(),
+          ],
+        ),
+        const SizedBox(
+          height: 6,
+        ),
+        Builder(builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(28, 0, 12, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  commentContent,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                      color: const Color.fromARGB(255, 217, 215, 215)),
+                  textAlign: TextAlign.left,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                // Row(
+                //   mainAxisSize: MainAxisSize.min,
+                //   children: [
+                //     const Spacer(),
+                //     Text(upvotes.length.toString()),
+                //     const SizedBox(
+                //       width: 10,
+                //     ),
+                //     GestureDetector(
+                //       onTap: () {
+                //         if (istapped == false) {
+                //         final _firestore = FirebaseFirestore.instance;
+                //         _firestore.collection('feed').doc(postId).collection('comments').doc(CommentId).update({'Likes': FieldValue.arrayUnion([context.watch<Users>().id])});
+                //         }
+                //       },
+                //       child: Icon(
+                //         istapped
+                //             ? Icons.thumb_up
+                //             : Icons.thumb_up_alt_outlined,
+                //         size: 15.0,
+                //       ),
+                //     ),
+                //     const SizedBox(
+                //       width: 8,
+                //     )
+                //   ],
+                // ),
+              ],
+            ),
           );
-        },
-      ),
+        }),
+        const Divider(
+          thickness: 0.9,
+          height: 30,
+        ),
+      ],
     );
   }
 }

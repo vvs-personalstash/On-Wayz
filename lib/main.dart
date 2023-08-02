@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_ways/Networking/image.dart';
+import 'package:on_ways/Networking/location.dart';
 import 'package:on_ways/Providers/User.dart';
 import 'package:on_ways/authentication/register.dart';
 import 'package:on_ways/screens/blogscreen.dart';
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           providers: [
             ChangeNotifierProvider(
                 create: ((context) => GoogleSignInProvider())),
-            ChangeNotifierProvider(create: ((context) => Users()))
+            ChangeNotifierProvider(create: ((context) => Users())),
           ],
           child: MaterialApp(
             title: 'Flutter Demo',

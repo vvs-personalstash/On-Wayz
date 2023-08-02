@@ -188,7 +188,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTHp7HDUzfrraXrobnp_eKUtNeFiq9E8NklA&usqp=CAU');
                             await user.updateDisplayName(nameController.text);
                             if (!context.mounted) return;
-                            context.read<Users>().update();
+                            context.read<Users>().updateDetails();
                             Navigator.pushNamedAndRemoveUntil(context,
                                 HomeScreen.routename, (route) => false);
                           }),

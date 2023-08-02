@@ -1,3 +1,4 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class Users with ChangeNotifier {
   GeoPoint Location = GeoPoint(0, 0);
   List<dynamic> chats_id = [];
 
-  void update() async {
+  void updateDetails() async {
     final user = await FirebaseAuth.instance.currentUser;
     final _firestore = await FirebaseFirestore.instance;
     id = await user!.uid;
@@ -26,7 +27,7 @@ class Users with ChangeNotifier {
     final docRef = _firestore.collection('User-Data').doc(user.uid);
     docRef.get().then((DocumentSnapshot snapshot) {
       dynamic data = snapshot.data();
-      Location = data.get('Last Location');
+      Location = data.get('Last Location') as GeoPoint;
       chats_id = data.get('chats_id');
       UserName = data.get('UserName');
       chats_id = data.get('chats_id');
