@@ -34,7 +34,8 @@ class _SignUpPageState extends State<SignUpPage> {
     final user = FirebaseAuth.instance.currentUser!;
     var dimensions = MediaQuery.of(context).size;
     String countrycode = '+91';
-
+    var Latitude = 0;
+    var Longitude = 0;
     debugPrint(user.email);
     return SafeArea(
         child: Scaffold(
@@ -150,7 +151,17 @@ class _SignUpPageState extends State<SignUpPage> {
                             padding: EdgeInsets.only(left: 15, right: 15),
                             margin: EdgeInsets.only(left: 10, right: 20),
                             child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => Dialog(
+                                              child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              'Your Location is:- ${context.watch<Location>().longitudeoflocation},${context.watch<Location>().latitudeoflocation}',
+                                            ),
+                                          )));
+                                },
                                 child: Container(
                                     height: 20,
                                     width: 100,
@@ -170,12 +181,14 @@ class _SignUpPageState extends State<SignUpPage> {
                           label: 'Sign Up',
                           action: () async {
                             var db = FirebaseFirestore.instance;
+                            Location location =
+                                Provider.of(context, listen: false);
                             final userData = {
                               "UserName": usernameController.text,
                               "phonenumber": countrycode + phoneController.text,
                               "Last Location": GeoPoint(
-                                  Location().latitudeoflocation!,
-                                  Location().longitudeoflocation!),
+                                  location.latitudeoflocation!,
+                                  location.longitudeoflocation!),
                             };
                             db
                                 .collection("User-Data")

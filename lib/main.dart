@@ -30,6 +30,8 @@ class MyApp extends StatelessWidget {
             ChangeNotifierProvider(
                 create: ((context) => GoogleSignInProvider())),
             ChangeNotifierProvider(create: ((context) => Users())),
+            ChangeNotifierProvider(
+                create: ((create) => Location()), lazy: false),
           ],
           child: MaterialApp(
             title: 'Flutter Demo',

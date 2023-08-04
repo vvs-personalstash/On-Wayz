@@ -3,6 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 
+import 'package:on_ways/Networking/location.dart';
+import 'package:provider/provider.dart';
+
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
 
@@ -18,6 +21,7 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     //loadData();
     super.initState();
+    Location().getCurrentLocation();
   }
 
   // loadData() async {
@@ -67,7 +71,8 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       body: GoogleMap(
         initialCameraPosition: CameraPosition(
-          target: initialLocation,
+          target: LatLng(context.read<Location>().latitudeoflocation!,
+              context.read<Location>().longitudeoflocation!),
           zoom: 14,
         ),
         // ToDO: add markers

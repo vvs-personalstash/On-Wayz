@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
               final provider =
                   Provider.of<GoogleSignInProvider>(context, listen: false);
               await provider.googleLogout();
-              Navigator.popAndPushNamed(context, LoginPage.routename);
+              Navigator.pushReplacementNamed(context, LoginPage.routename);
             },
             icon: const Icon(
               Icons.power_settings_new,

@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
-class Location {
+class Location with ChangeNotifier {
   double? latitudeoflocation;
   double? longitudeoflocation;
 
@@ -8,16 +9,21 @@ class Location {
     try {
       LocationPermission permission;
       permission = await Geolocator.requestPermission();
-
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.low);
-      latitudeoflocation = position.latitude;
-      longitudeoflocation = position.longitude;
       if (permission == LocationPermission.denied) {
         print('locaation permission denied');
       }
+
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.low);
+      print(position);
+      latitudeoflocation = position.latitude;
+      longitudeoflocation = position.longitude;
     } catch (e) {
       print(e);
     }
+  }
+
+  Location() {
+    getCurrentLocation();
   }
 }
