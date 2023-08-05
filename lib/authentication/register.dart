@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:geoflutterfire2/geoflutterfire2.dart';
 import 'package:on_ways/Networking/image.dart';
 import 'package:on_ways/Networking/location.dart';
 import 'package:on_ways/Providers/User.dart';
@@ -181,14 +182,17 @@ class _SignUpPageState extends State<SignUpPage> {
                           label: 'Sign Up',
                           action: () async {
                             var db = FirebaseFirestore.instance;
+                            final geo = GeoFlutterFire();
                             Location location =
                                 Provider.of(context, listen: false);
+                            GeoFirePoint myLocation = geo.point(
+                                latitude: location.latitudeoflocation!,
+                                longitude: location.longitudeoflocation!);
                             final userData = {
                               "UserName": usernameController.text,
                               "phonenumber": countrycode + phoneController.text,
-                              "Last Location": GeoPoint(
-                                  location.latitudeoflocation!,
-                                  location.longitudeoflocation!),
+                              "Last Location": myLocation.data,
+                              "Photo": imageUrl
                             };
                             db
                                 .collection("User-Data")
@@ -196,9 +200,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                 .set(userData);
                             await user
                                 .updateDisplayName(usernameController.text);
-                            await user.updatePhotoURL(imageUrl != 'No Image'
-                                ? imageUrl
-                                : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTHp7HDUzfrraXrobnp_eKUtNeFiq9E8NklA&usqp=CAU');
+                            // await user.updatePhotoURL(imageUrl != 'No Image'
+                            //     ? imageUrl
+                            //     : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTHp7HDUzfrraXrobnp_eKUtNeFiq9E8NklA&usqp=CAU');
                             await user.updateDisplayName(nameController.text);
                             if (!context.mounted) return;
                             context.read<Users>().updateDetails();
