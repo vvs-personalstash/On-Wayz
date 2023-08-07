@@ -41,7 +41,6 @@ class LoginPage extends StatelessWidget {
                 debugPrint(user.email);
 
                 Provider.of<Users>(context, listen: false).updateDetails();
-
                 user_credentials.get().then((docSnapshot) => {
                       if (docSnapshot.exists)
                         {

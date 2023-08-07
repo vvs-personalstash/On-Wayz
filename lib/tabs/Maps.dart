@@ -22,7 +22,6 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController controllerParam;
-  final LatLng _kMapCenter = const LatLng(25.2744, 133.7751);
   List<Marker> markers = <Marker>[];
   @override
   void initState() {
@@ -36,20 +35,21 @@ class _MapScreenState extends State<MapScreen> {
     final geo = GeoFlutterFire();
     Users user = Provider.of<Users>(context, listen: false);
     final CollectionReference userCollection = FirebaseFirestore.instance
-        .collection('user-data')
+        .collection('User-Data')
       ..where(FieldPath.documentId, isNotEqualTo: user.id);
     final GeoFirePoint center = geo.point(
-        latitude: user.Location.latitude, longitude: user.Location.longitude);
+        latitude: context.read<Location>().latitudeoflocation!,
+        longitude: context.read<Location>().longitudeoflocation!);
 
-    Stream<List<DocumentSnapshot>> stream = geo
-        .collection(collectionRef: userCollection)
-        .within(
-          center: center,
-          radius: 50, // Set your desired radius here
-          field: 'location', // Change to the field containing the location data
-          strictMode: true,
-        );
-
+    Stream<List<DocumentSnapshot>> stream =
+        geo.collection(collectionRef: userCollection).within(
+              center: center,
+              radius: 50, // Set your desired radius here
+              field:
+                  'Last Location', // Change to the field containing the location data
+              strictMode: true,
+            );
+    print(1);
     List<DocumentSnapshot> querySnapshot = await stream.first;
     return querySnapshot;
   }
@@ -87,27 +87,84 @@ class _MapScreenState extends State<MapScreen> {
     final ByteData? byteData =
         await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
+    print(user.Location.latitude);
     setState(() {
       markers.add(
         Marker(
           markerId: MarkerId(user.id),
           position: LatLng(user.Location.latitude, user.Location.longitude),
           icon: BitmapDescriptor.fromBytes(resizedImageMarker),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundImage: NetworkImage(user.image),
+                              radius: 15,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              '${user.name}',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      color: Color(0xFF1d2d59),
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '@${user.UserName}',
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                            color: Color.fromARGB(255, 10, 10, 10),
+                            fontSize: 20,
+                            fontStyle: FontStyle.italic),
+                      )
+                    ],
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context, 'Request sent'),
+                      child: const Text('Send Request'))
+                ],
+              ),
+            ).then((value) => {
+                  if (value != null)
+                    {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text('$value succesful'),
+                        action: SnackBarAction(label: 'OK', onPressed: () {}),
+                      ))
+                    }
+                });
+          },
         ),
       );
+      print(1);
     });
 
     List<DocumentSnapshot<Object?>> nearbyUserLocations =
         await fetchNearbyUserLocations();
-    List<Marker> restmarkers = [];
     nearbyUserLocations.forEach((userDoc) async {
-      GeoPoint location = userDoc['location'];
+      GeoPoint location = userDoc['Last Location']['geopoint'];
       double latitude = location.latitude;
       double longitude = location.longitude;
-      String username = userDoc['username'];
+      print(location);
+      String username = userDoc['UserName'];
       String userid = userDoc.id;
-      String image = userDoc['image'];
-      Uint8List images = await loadNetworkImage(user.image);
+      String image = userDoc['Photo'];
+      Uint8List images = await loadNetworkImage(image);
       final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
           images.buffer.asUint8List(),
           targetHeight: 150,
@@ -116,17 +173,58 @@ class _MapScreenState extends State<MapScreen> {
       final ByteData? byteData =
           await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
       final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
-      restmarkers.add(
-        Marker(
-          markerId: MarkerId(userid), // Use a unique marker ID
-          position: LatLng(latitude, longitude),
-          icon: BitmapDescriptor.fromBytes(resizedImageMarker),
-          infoWindow: InfoWindow(title: username),
-        ),
-      );
-    });
-    setState(() {
-      markers.addAll(restmarkers);
+      setState(() {
+        markers.add(
+          Marker(
+              markerId: MarkerId(userid), // Use a unique marker ID
+              position: LatLng(latitude, longitude),
+              icon: BitmapDescriptor.fromBytes(resizedImageMarker),
+              infoWindow: InfoWindow(title: username),
+              draggable: true,
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(image),
+                            radius: 15,
+                          ),
+                          Text(
+                            '$username',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium!
+                                .copyWith(
+                                    color: Color(0xFF1d2d59), fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, 'Request sent'),
+                          child: const Text('Send Request'))
+                    ],
+                  ),
+                ).then((value) => {
+                      if (value != null)
+                        {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('$value succesful'),
+                            action:
+                                SnackBarAction(label: 'OK', onPressed: () {}),
+                          ))
+                        }
+                    });
+              }),
+        );
+        print(1);
+      });
     });
   }
 
