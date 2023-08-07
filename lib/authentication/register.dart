@@ -192,7 +192,10 @@ class _SignUpPageState extends State<SignUpPage> {
                               "UserName": usernameController.text,
                               "phonenumber": countrycode + phoneController.text,
                               "Last Location": myLocation.data,
-                              "Photo": imageUrl
+                              "Photo": imageUrl,
+                              "location": GeoPoint(location.latitudeoflocation!,
+                                  location.longitudeoflocation!),
+                              "age": Age.value,
                             };
                             db
                                 .collection("User-Data")
