@@ -13,6 +13,7 @@ class CommunityPost {
   String author = '';
   String image_url = '';
   List<String> Likes = [];
+  bool isLiked = false;
   CommunityPost(
       {required this.id,
       required this.title,
@@ -22,4 +23,11 @@ class CommunityPost {
       required this.author,
       required this.image_url,
       required this.Likes});
+}
+
+class ScreenArguments {
+  final CommunityPost data;
+  final bool isLiked;
+
+  ScreenArguments({required this.data, required this.isLiked});
 }

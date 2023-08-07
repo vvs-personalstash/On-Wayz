@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:on_ways/Providers/Community_provider.dart';
 import 'package:on_ways/Widgets/blogcard.dart';
+import 'package:on_ways/Widgets/custom_appbar.dart';
 import 'package:on_ways/screens/AddCommunityPost.dart';
 
 class CommunityTab extends StatefulWidget {
@@ -30,6 +31,7 @@ class _CommunityTabState extends State<CommunityTab> {
     final _auth = FirebaseAuth.instance;
     debugPrint('community rebuild');
     return Scaffold(
+        appBar: AppBar(title: Text('Community Feed')),
         floatingActionButton: OpenContainer(
           transitionDuration: const Duration(milliseconds: 500),
           transitionType: ContainerTransitionType.fadeThrough,
