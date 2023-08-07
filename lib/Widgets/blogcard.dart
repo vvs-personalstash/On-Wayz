@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:on_ways/Providers/Community_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:on_ways/Providers/User.dart';
@@ -26,11 +27,14 @@ class _BlogCardState extends State<BlogCard> {
 
   @override
   Widget build(BuildContext context) {
+    bool isLiked =
+        widget.receivedData.Likes.contains(context.watch<Users>().id);
     final user = FirebaseAuth.instance;
     return GestureDetector(
       onTap: () async {
         var result = await Navigator.pushNamed(context, BlogScreen.routeName,
-            arguments: widget.receivedData);
+            arguments:
+                ScreenArguments(data: widget.receivedData, isLiked: isLiked));
         if (result != null) {
           setState(() {
             communityPost = (result as CommunityPost);
@@ -42,21 +46,25 @@ class _BlogCardState extends State<BlogCard> {
         clipBehavior: Clip.hardEdge,
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         color: Theme.of(context).cardTheme.color,
-        surfaceTintColor: Colors.white,
+        surfaceTintColor: Color.fromARGB(255, 248, 243, 243),
+        shadowColor: Colors.grey.shade300,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.receivedData.image_url != Null)
-              ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image.network(
-                    widget.receivedData.image_url,
-                    fit: BoxFit.fill,
-                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      widget.receivedData.image_url,
+                      fit: BoxFit.fill,
+                    )),
+              ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10),
+                  const EdgeInsets.symmetric(horizontal: 14.0, vertical: 5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -67,13 +75,16 @@ class _BlogCardState extends State<BlogCard> {
                           .copyWith(
                               fontWeight: FontWeight.bold,
                               fontSize: 23,
-                              color: Colors.white70)),
+                              color: Color(0xFF1d2d59))),
                   const SizedBox(height: 2),
                   Text(
                     widget.receivedData.content.length > 100
                         ? '${widget.receivedData.content.substring(0, 100)}...'
                         : widget.receivedData.content,
-                    style: Theme.of(context).textTheme.bodyLarge, //2
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge!
+                        .copyWith(color: Color(0xFF1d2d59)), //2
                   ),
                   const Divider(
                     thickness: 0.9,
@@ -90,13 +101,17 @@ class _BlogCardState extends State<BlogCard> {
                         style: Theme.of(context) //3
                             .textTheme
                             .titleMedium!
-                            .copyWith(fontWeight: FontWeight.bold)),
+                            .copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF1d2d59))),
                     trailing: FittedBox(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Icon(
-                            Icons.arrow_upward,
+                            isLiked
+                                ? CupertinoIcons.heart_fill
+                                : CupertinoIcons.heart,
                             size: 20,
                             color: widget.receivedData.Likes
                                     .contains(context.watch<Users>().id)

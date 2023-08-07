@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:on_ways/Providers/Community_provider.dart';
@@ -16,8 +17,9 @@ class BlogScreen extends StatelessWidget {
   const BlogScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    final CommunityPost data =
-        ModalRoute.of(context)!.settings.arguments as CommunityPost;
+    final args = ModalRoute.of(context)!.settings.arguments as ScreenArguments;
+    final CommunityPost data = args.data;
+    var isLiked = args.isLiked;
     return WillPopScope(
       onWillPop: () {
         Navigator.pop(context);
@@ -56,8 +58,31 @@ class BlogScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Post(data: data),
-                Comments(postId: data.id),
+                Post(data: data, isLiked: isLiked),
+                Text(
+                  'Comments',
+                  style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 28,
+                      color: Color(0xFF1d2d59),
+                      fontWeight: FontWeight.w800),
+                ),
+                Container(
+                    padding: EdgeInsets.only(top: 10),
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: const Color.fromARGB(137, 141, 140, 140),
+                        ),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Color.fromARGB(255, 242, 209, 213),
+                              blurRadius: 7,
+                              spreadRadius: 5),
+                        ],
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15))),
+                    child: Comments(postId: data.id)),
               ],
             ),
           ),
@@ -70,17 +95,6 @@ class BlogScreen extends StatelessWidget {
 class Comments extends StatelessWidget {
   Comments({super.key, required this.postId});
   String postId;
-  final List comments = const [
-    {
-      "student": "Ravi Maurya",
-      "comment": "demo comment",
-      "upvotes": 0,
-      "date": "2023-06-25",
-      "post": 2,
-      "liked": false
-    },
-  ];
-
   @override
   Widget build(BuildContext context) {
     final _firestore = FirebaseFirestore.instance;
@@ -224,11 +238,12 @@ class CommentWidget extends StatelessWidget {
 }
 
 class Post extends StatelessWidget {
-  const Post({
+  Post({
     required this.data,
+    required this.isLiked,
   });
   final CommunityPost data;
-
+  bool isLiked;
   @override
   Widget build(BuildContext context) {
     DateTime parseDate = data.date;
@@ -238,7 +253,7 @@ class Post extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.only(top: 10, bottom: 0, left: 14, right: 14),
       decoration: BoxDecoration(
-          color: Color.fromARGB(255, 159, 174, 223),
+          color: Color.fromARGB(255, 230, 232, 240),
           borderRadius: BorderRadius.circular(20)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,10 +267,10 @@ class Post extends StatelessWidget {
             ),
             title: Text(
               data.author,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium!
-                  .copyWith(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1d2d59),
+                  ),
             ),
             trailing: Text(outputDate,
                 style: Theme.of(context)
@@ -273,54 +288,67 @@ class Post extends StatelessWidget {
                   .copyWith(
                       fontWeight: FontWeight.bold,
                       fontSize: 23,
-                      color: Colors.white70)),
-          if (data.image_url.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10),
-              child: Image(
-                image: NetworkImage(data.image_url),
-                fit: BoxFit.cover,
-              ),
-            ),
+                      color: const Color.fromARGB(179, 0, 0, 0))),
           Text(
             data.content,
             style:
                 Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 15),
           ),
-          //       Activity(data: data)
+          if (data.image_url.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.network(
+                    data.image_url,
+                    fit: BoxFit.fill,
+                  )),
+            ),
+          Activity(data: data, isLiked: isLiked)
         ],
       ),
     );
   }
 }
 
-// class Activity extends StatelessWidget {
-//   const Activity({required this.data});
-//   final CommunityPost data;
-//   @override
-//   Widget build(BuildContext context) {
-//     var db = FirebaseFirestore.instance;
-//     return Row(
-//       children: [
-//         const Spacer(),
-//         LikeButton(
-//             likeBuilder: (isLiked) => Icon(
-//                   Icons.arrow_upward,
-//                   color: isLiked ? const Color(0xFFd988a1) : Colors.grey,
-//                 ),
-//             likeCount: data.Likes.length,
-//             isLiked: data.Likes.contains(context.watch<Users>().id),
-//             onTap: (isLiked) {
-//               try {
-//                 db.collection('feed').doc(data.id).update({
-//                   'Likes':
-//                       FieldValue.arrayRemove(context.watch<Users>().id as List)
-//                 });
-//               } catch (e) {
-//                 print(e);
-//               }
-//             }),
-//       ],
-//     );
-//   }
-// }
+class Activity extends StatelessWidget {
+  const Activity({required this.isLiked, required this.data});
+  final CommunityPost data;
+  final isLiked;
+  @override
+  Widget build(BuildContext context) {
+    var db = FirebaseFirestore.instance;
+    return Row(
+      children: [
+        Icon(Icons.location_history, color: const Color(0xFFd988a1)),
+        Text(
+          data.city,
+          style: Theme.of(context).textTheme.displayMedium!.copyWith(
+                fontSize: 14,
+                color: Color(0xFF1d2d59),
+              ),
+        ),
+        const Spacer(),
+        GestureDetector(
+            child: Icon(
+              isLiked ? CupertinoIcons.heart_circle : CupertinoIcons.heart,
+              color: isLiked ? const Color(0xFFd988a1) : Colors.grey,
+            ),
+            onTap: () {
+              Users user = Provider.of<Users>(context, listen: false);
+              try {
+                if (isLiked) {
+                  db.collection('feed').doc(data.id).update(
+                      {'Likes': FieldValue.arrayRemove(user.id as List)});
+                } else {
+                  db.collection('feed').doc(data.id).update(
+                      {'Likes': FieldValue.arrayUnion(user.id as List)});
+                }
+              } catch (e) {
+                print(e);
+              }
+            }),
+      ],
+    );
+  }
+}

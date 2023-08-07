@@ -24,28 +24,28 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () async {
-              final provider =
-                  Provider.of<GoogleSignInProvider>(context, listen: false);
-              await provider.googleLogout();
-              Navigator.pushReplacementNamed(context, LoginPage.routename);
-            },
-            icon: const Icon(
-              Icons.power_settings_new,
-              color: Color(0xFF1d2d59),
-            ),
-          ),
-          title: Text(
-            'On Wayz',
-            style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                fontSize: 24,
-                color: Color(0xFF1d2d59),
-                fontWeight: FontWeight.w700),
-          ),
-          centerTitle: true,
-        ),
+        // appBar: AppBar(
+        //   leading: IconButton(
+        //     onPressed: () async {
+        //       final provider =
+        //           Provider.of<GoogleSignInProvider>(context, listen: false);
+        //       await provider.googleLogout();
+        //       Navigator.pushReplacementNamed(context, LoginPage.routename);
+        //     },
+        //     icon: const Icon(
+        //       Icons.power_settings_new,
+        //       color: Color(0xFF1d2d59),
+        //     ),
+        //   ),
+        //   title: Text(
+        //     'On Wayz',
+        //     style: Theme.of(context).textTheme.titleLarge!.copyWith(
+        //         fontSize: 24,
+        //         color: Color(0xFF1d2d59),
+        //         fontWeight: FontWeight.w700),
+        //   ),
+        //   centerTitle: true,
+        // ),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
