@@ -26,15 +26,13 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final TextEditingController usernameController = TextEditingController();
 
-  final TextEditingController phoneController = TextEditingController();
-
   final TextEditingController Age = TextEditingController();
   String imageUrl = 'No Image';
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
     var dimensions = MediaQuery.of(context).size;
-    String countrycode = '+91';
+
     var Latitude = 0;
     var Longitude = 0;
     debugPrint(user.email);
@@ -59,44 +57,42 @@ class _SignUpPageState extends State<SignUpPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: GestureDetector(
-                            onTap: () async {
-                              var NewImageUrl = await Navigator.of(context)
-                                      .pushNamed(ImageUploadScreen.routename)
-                                  as String;
-                              print(NewImageUrl);
-                              if (NewImageUrl != Null) {
-                                setState(() {
-                                  imageUrl = NewImageUrl;
-                                  print(imageUrl);
-                                });
-                              }
-                            },
-                            child: Container(
-                              height: dimensions.height * 0.3,
-                              width: dimensions.width * 0.8,
-                              margin: EdgeInsets.only(
-                                  left: 10, right: 20, top: 20, bottom: 10),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(25),
-                                color: Colors.black.withOpacity(0.7),
-                              ),
-                              child: imageUrl == 'No Image'
-                                  ? Icon(
-                                      Icons.camera_alt_outlined,
-                                      color: Colors.white,
-                                      size: 50,
-                                    )
-                                  : ClipRRect(
-                                      borderRadius: BorderRadius.circular(25),
-                                      child: Image.network(
-                                        imageUrl,
-                                        fit: BoxFit.fill,
-                                      ),
+                      GestureDetector(
+                          onTap: () async {
+                            var NewImageUrl = await Navigator.of(context)
+                                    .pushNamed(ImageUploadScreen.routename)
+                                as String;
+                            print(NewImageUrl);
+                            if (NewImageUrl != Null) {
+                              setState(() {
+                                imageUrl = NewImageUrl;
+                                print(imageUrl);
+                              });
+                            }
+                          },
+                          child: Container(
+                            height: dimensions.height * 0.3,
+                            width: dimensions.width * 0.8,
+                            margin: EdgeInsets.only(
+                                left: 10, right: 20, top: 20, bottom: 10),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              color: Colors.black.withOpacity(0.7),
+                            ),
+                            child: imageUrl == 'No Image'
+                                ? Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: Colors.white,
+                                    size: 50,
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.fill,
                                     ),
-                            )),
-                      ),
+                                  ),
+                          )),
                       CustomTextField(
                         label: 'Full Name',
                         iconData: Icons.person,
@@ -112,28 +108,6 @@ class _SignUpPageState extends State<SignUpPage> {
                       ),
                       SizedBox(
                         height: 10,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 25),
-                        padding: const EdgeInsets.only(
-                            left: 15, right: 15, bottom: 5),
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 255, 255, 255),
-                          borderRadius: BorderRadius.circular(17),
-                        ),
-                        child: IntlPhoneField(
-                          controller: phoneController,
-                          decoration: InputDecoration(
-                            labelText: 'Phone Number',
-                            border: InputBorder.none,
-                            fillColor: Colors.white,
-                            filled: true,
-                          ),
-                          initialCountryCode: 'IN',
-                          onCountryChanged: (value) {
-                            countrycode = value.toString();
-                          },
-                        ),
                       ),
                       SizedBox(
                         height: 10,
@@ -190,19 +164,17 @@ class _SignUpPageState extends State<SignUpPage> {
                                 longitude: location.longitudeoflocation!);
                             final userData = {
                               "UserName": usernameController.text,
-                              "phonenumber": countrycode + phoneController.text,
                               "Last Location": myLocation.data,
                               "Photo": imageUrl,
                               "location": GeoPoint(location.latitudeoflocation!,
                                   location.longitudeoflocation!),
-                              "age": Age.value,
+                              "age": Age.text,
+                              'Friends': [],
                             };
                             db
                                 .collection("User-Data")
                                 .doc(user.uid)
                                 .set(userData);
-                            await user
-                                .updateDisplayName(usernameController.text);
                             // await user.updatePhotoURL(imageUrl != 'No Image'
                             //     ? imageUrl
                             //     : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTHp7HDUzfrraXrobnp_eKUtNeFiq9E8NklA&usqp=CAU');
@@ -212,6 +184,9 @@ class _SignUpPageState extends State<SignUpPage> {
                             Navigator.pushNamedAndRemoveUntil(context,
                                 HomeScreen.routename, (route) => false);
                           }),
+                      SizedBox(
+                        height: 50,
+                      )
                     ],
                   ),
                 ),

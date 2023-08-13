@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:on_ways/Networking/image.dart';
 import 'package:on_ways/Networking/location.dart';
 import 'package:on_ways/Providers/User.dart';
+import 'package:on_ways/authentication/login_PhoneNumber.dart';
+import 'package:on_ways/authentication/otp.dart';
 import 'package:on_ways/authentication/register.dart';
 import 'package:on_ways/screens/blogscreen.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';
@@ -96,6 +98,8 @@ class MyApp extends StatelessWidget {
               HomeScreen.routename: (context) => const HomeScreen(),
               ImageUploadScreen.routename: (context) => ImageUploadScreen(),
               BlogScreen.routeName: (context) => BlogScreen(),
+              PhoneAuthForm.routename: (context) => PhoneAuthForm(),
+              MyVerify.routename: (context) => MyVerify(),
             },
           ));
 }

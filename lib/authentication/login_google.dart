@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:on_ways/Providers/User.dart';
+import 'package:on_ways/authentication/login_PhoneNumber.dart';
 import 'package:on_ways/authentication/register.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';
 import 'package:on_ways/utilities/custom_button.dart';
@@ -50,7 +51,7 @@ class LoginPage extends StatelessWidget {
                       else
                         {
                           Navigator.pushReplacementNamed(
-                              context, SignUpPage.routename)
+                              context, PhoneAuthForm.routename)
                         }
                     });
               },
