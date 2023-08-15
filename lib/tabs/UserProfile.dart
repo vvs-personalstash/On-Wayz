@@ -24,9 +24,9 @@ class _UserProfileState extends State<UserProfile> {
                 children: [
                   Image(
                     image: NetworkImage(user.image),
-                    // height: 200,
+                    height: 300,
                     width: double.infinity,
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.fill,
                   ),
                   Container(
                     height: 50, // Height of the gradient area (last 50 pixels)

@@ -311,18 +311,25 @@ class Post extends StatelessWidget {
   }
 }
 
-class Activity extends StatelessWidget {
-  const Activity({required this.isLiked, required this.data});
+class Activity extends StatefulWidget {
+  Activity({required this.isLiked, required this.data});
   final CommunityPost data;
-  final isLiked;
+  var isLiked;
+
+  @override
+  State<Activity> createState() => _ActivityState();
+}
+
+class _ActivityState extends State<Activity> {
   @override
   Widget build(BuildContext context) {
+    Users user = Provider.of<Users>(context, listen: false);
     var db = FirebaseFirestore.instance;
     return Row(
       children: [
         Icon(Icons.location_history, color: const Color(0xFFd988a1)),
         Text(
-          data.city,
+          widget.data.city,
           style: Theme.of(context).textTheme.displayMedium!.copyWith(
                 fontSize: 14,
                 color: Color(0xFF1d2d59),
@@ -331,18 +338,27 @@ class Activity extends StatelessWidget {
         const Spacer(),
         GestureDetector(
             child: Icon(
-              isLiked ? CupertinoIcons.heart_circle : CupertinoIcons.heart,
-              color: isLiked ? const Color(0xFFd988a1) : Colors.grey,
+              widget.isLiked
+                  ? CupertinoIcons.heart_circle
+                  : CupertinoIcons.heart,
+              color: widget.isLiked ? const Color(0xFFd988a1) : Colors.grey,
             ),
             onTap: () {
-              Users user = Provider.of<Users>(context, listen: false);
               try {
-                if (isLiked) {
-                  db.collection('feed').doc(data.id).update(
-                      {'Likes': FieldValue.arrayRemove(user.id as List)});
+                if (widget.isLiked) {
+                  setState(() {
+                    widget.isLiked = false;
+                  });
+                  db.collection('feed').doc(widget.data.id).update({
+                    'Likes': FieldValue.arrayRemove([user.id])
+                  });
                 } else {
-                  db.collection('feed').doc(data.id).update(
-                      {'Likes': FieldValue.arrayUnion(user.id as List)});
+                  setState(() {
+                    widget.isLiked = true;
+                  });
+                  db.collection('feed').doc(widget.data.id).update({
+                    'Likes': FieldValue.arrayUnion([user.id])
+                  });
                 }
               } catch (e) {
                 print(e);

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:ui' as ui;
@@ -10,8 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geoflutterfire2/geoflutterfire2.dart';
-
+import 'package:custom_marker/marker_icon.dart';
 import '../Providers/User.dart';
+import '../Widgets/BottomModalSheet.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -23,6 +23,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController controllerParam;
   List<Marker> markers = <Marker>[];
+  double radius = 50;
   @override
   void initState() {
     //loadData();
@@ -34,6 +35,7 @@ class _MapScreenState extends State<MapScreen> {
   Future<List<DocumentSnapshot>> fetchNearbyUserLocations() async {
     final geo = GeoFlutterFire();
     Users user = Provider.of<Users>(context, listen: false);
+    print(user.id);
     final CollectionReference userCollection = FirebaseFirestore.instance
         .collection('User-Data')
       ..where(FieldPath.documentId, isNotEqualTo: user.id);
@@ -44,7 +46,7 @@ class _MapScreenState extends State<MapScreen> {
     Stream<List<DocumentSnapshot>> stream =
         geo.collection(collectionRef: userCollection).within(
               center: center,
-              radius: 50, // Set your desired radius here
+              radius: radius, // Set your desired radius here
               field:
                   'Last Location', // Change to the field containing the location data
               strictMode: true,
@@ -54,101 +56,57 @@ class _MapScreenState extends State<MapScreen> {
     return querySnapshot;
   }
 
-  Future<Uint8List> loadNetworkImage(path) async {
-    final completed = Completer<ImageInfo>();
-    var image = NetworkImage(path);
-    image.resolve(const ImageConfiguration()).addListener(
-        ImageStreamListener((info, _) => completed.complete(info)));
-    final imageInfo = await completed.future;
-    final byteData =
-        await imageInfo.image.toByteData(format: ui.ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
-  }
-
-  // void _onMapCreated(GoogleMapController controllerParam) {
-  //   setState(() {
-  //     controller = controllerParam;
-  //   });
-  // }
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
       controllerParam = controller;
     });
   }
 
+  // Future<Uint8List> loadNetworkImage(path) async {
+  //   final completed = Completer<ImageInfo>();
+  //   var image = NetworkImage(path);
+  //   image.resolve(const ImageConfiguration()).addListener(
+  //       ImageStreamListener((info, _) => completed.complete(info)));
+  //   final imageInfo = await completed.future;
+  //   final byteData =
+  //       await imageInfo.image.toByteData(format: ui.ImageByteFormat.png);
+  //   return byteData!.buffer.asUint8List();
+  // }
+
+  // void _onMapCreated(GoogleMapController controllerParam) {
+  //   setState(() {
+  //     controller = controllerParam;
+  //   });
+  // }
+
   Future<void> _getUserLocation() async {
     Users user = Provider.of<Users>(context, listen: false);
-    Uint8List image = await loadNetworkImage(user.image);
-    final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
-        image.buffer.asUint8List(),
-        targetHeight: 150,
-        targetWidth: 150);
-    final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
-    final ByteData? byteData =
-        await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
+    // Uint8List image = await loadNetworkImage(user.image);
+    // final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
+    //     image.buffer.asUint8List(),
+    //     targetHeight: 150,
+    //     targetWidth: 150);
+    // final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
+    // final ByteData? byteData =
+    //     await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+    // final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
+    BitmapDescriptor customMarker =
+        await MarkerIcon.downloadResizePictureCircle(
+      user.image,
+      size: 200,
+      addBorder: true,
+      borderColor: Colors.pinkAccent.withOpacity(0.7),
+      borderSize: 30,
+    );
     print(user.Location.latitude);
     setState(() {
       markers.add(
         Marker(
+          zIndex: 10,
           markerId: MarkerId(user.id),
           position: LatLng(user.Location.latitude, user.Location.longitude),
-          icon: BitmapDescriptor.fromBytes(resizedImageMarker),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(user.image),
-                              radius: 15,
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              '${user.name}',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                      color: Color(0xFF1d2d59),
-                                      fontSize: 30,
-                                      fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        '@${user.UserName}',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            color: Color.fromARGB(255, 10, 10, 10),
-                            fontSize: 20,
-                            fontStyle: FontStyle.italic),
-                      )
-                    ],
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, 'Request sent'),
-                      child: const Text('Send Request'))
-                ],
-              ),
-            ).then((value) => {
-                  if (value != null)
-                    {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text('$value succesful'),
-                        action: SnackBarAction(label: 'OK', onPressed: () {}),
-                      ))
-                    }
-                });
-          },
+          icon: customMarker,
+          onTap: () {},
         ),
       );
       print(1);
@@ -157,74 +115,128 @@ class _MapScreenState extends State<MapScreen> {
     List<DocumentSnapshot<Object?>> nearbyUserLocations =
         await fetchNearbyUserLocations();
     nearbyUserLocations.forEach((userDoc) async {
-      GeoPoint location = userDoc['Last Location']['geopoint'];
-      double latitude = location.latitude;
-      double longitude = location.longitude;
-      print(location);
-      String username = userDoc['UserName'];
-      String userid = userDoc.id;
-      String image = userDoc['Photo'];
-      Uint8List images = await loadNetworkImage(image);
-      final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
-          images.buffer.asUint8List(),
-          targetHeight: 150,
-          targetWidth: 150);
-      final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
-      final ByteData? byteData =
-          await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-      final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
-      setState(() {
-        markers.add(
-          Marker(
-              markerId: MarkerId(userid), // Use a unique marker ID
-              position: LatLng(latitude, longitude),
-              icon: BitmapDescriptor.fromBytes(resizedImageMarker),
-              infoWindow: InfoWindow(title: username),
-              draggable: true,
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(image),
-                            radius: 15,
-                          ),
-                          Text(
-                            '$username',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium!
-                                .copyWith(
-                                    color: Color(0xFF1d2d59), fontSize: 20),
-                          ),
-                        ],
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                          onPressed: () =>
-                              Navigator.pop(context, 'Request sent'),
-                          child: const Text('Send Request'))
-                    ],
-                  ),
-                ).then((value) => {
-                      if (value != null)
-                        {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('$value succesful'),
-                            action:
-                                SnackBarAction(label: 'OK', onPressed: () {}),
-                          ))
-                        }
-                    });
-              }),
+      print(userDoc.id);
+      if (userDoc.id != user.id) {
+        GeoPoint location = userDoc['Last Location']['geopoint'];
+        double latitude = location.latitude;
+        double longitude = location.longitude;
+        print(location);
+        String username = userDoc['UserName'];
+        String userid = userDoc.id;
+        var Age = userDoc['age'];
+        String image = userDoc['Photo'];
+        // Uint8List images = await loadNetworkImage(image);
+        // final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
+        //     images.buffer.asUint8List(),
+        //     targetHeight: 150,
+        //     targetWidth: 150);
+        // final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
+        // final ByteData? byteData =
+        //     await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+        // final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
+        BitmapDescriptor customMarker =
+            await MarkerIcon.downloadResizePictureCircle(
+          image,
+          size: 200,
+          addBorder: true,
+          borderColor: Colors.white,
+          borderSize: 30,
         );
-        print(1);
-      });
+        setState(() {
+          markers.add(
+            Marker(
+                markerId: MarkerId(userid), // Use a unique marker ID
+                position: LatLng(latitude, longitude),
+                icon: customMarker,
+                infoWindow: InfoWindow(title: username),
+                draggable: true,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Container(
+                        width: 150,
+                        height: 70,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundImage: NetworkImage(image),
+                                    radius: 15,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    '${username}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                            color: Color(0xFF1d2d59),
+                                            fontSize: 30,
+                                            fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '$Age years old',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium!
+                                  .copyWith(
+                                      color: Color.fromARGB(255, 10, 10, 10),
+                                      fontSize: 15,
+                                      fontStyle: FontStyle.italic),
+                            )
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color.fromRGBO(25, 28, 77, 1),
+                            ),
+                            onPressed: () {
+                              Users user =
+                                  Provider.of<Users>(context, listen: false);
+                              final _firestore = FirebaseFirestore.instance;
+                              _firestore
+                                  .collection('User-Data')
+                                  .doc(userid)
+                                  .collection('Requests')
+                                  .add({
+                                    'author': user.name,
+                                    'image': user.image,
+                                    'time': DateTime.now(),
+                                  })
+                                  .then((value) => print("Comment Added"))
+                                  .catchError((error) =>
+                                      print("Failed to add Comment: $error"));
+
+                              Navigator.pop(context, 'Request sent');
+                            },
+                            child: const Text('Send Request'))
+                      ],
+                    ),
+                  ).then((value) => {
+                        if (value != null)
+                          {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text('$value succesful'),
+                              action:
+                                  SnackBarAction(label: 'OK', onPressed: () {}),
+                            ))
+                          }
+                      });
+                }),
+          );
+          print(1);
+        });
+      }
     });
   }
 
@@ -232,6 +244,76 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.white.withOpacity(0.7),
+        toolbarHeight: 90,
+        leadingWidth: 70,
+        elevation: 0,
+        leading: GestureDetector(
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.pink.shade300,
+                borderRadius: BorderRadius.circular(5)),
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.all(10),
+            child:
+                Icon(Icons.location_on_rounded, color: Colors.white, size: 30),
+          ),
+        ),
+        title: Container(
+          padding: EdgeInsets.all(10),
+          child: Column(children: [
+            Text(
+              'People Nearby',
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Color.fromRGBO(25, 28, 77, 1),
+                  ),
+            ),
+            SizedBox(height: 7),
+            Text(
+              'Gwalior',
+              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
+                    fontSize: 15,
+                    color: Color.fromRGBO(13, 13, 14, 0.445),
+                  ),
+            )
+          ]),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              showModalBottomSheet(
+                  isScrollControlled: true,
+                  backgroundColor: Colors.black.withOpacity(0.5),
+                  context: context,
+                  builder: ((context) => SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: BottomAddTaskk(
+                          voidCallback: (radiusnew) {
+                            setState(() {
+                              radius = radiusnew;
+                            });
+                          },
+                          radius: radius,
+                        ),
+                      )));
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.pink.shade300,
+                  borderRadius: BorderRadius.circular(5)),
+              padding: EdgeInsets.all(15),
+              margin: EdgeInsets.all(10),
+              child: Icon(Icons.settings_input_component,
+                  color: Colors.white, size: 23),
+            ),
+          ),
+        ],
+      ),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(

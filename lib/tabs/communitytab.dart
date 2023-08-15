@@ -28,10 +28,64 @@ class _CommunityTabState extends State<CommunityTab> {
   Widget build(BuildContext context) {
     final scrollController = ScrollController();
     final _firestore = FirebaseFirestore.instance;
+    var dimensions = MediaQuery.of(context).size;
     final _auth = FirebaseAuth.instance;
     debugPrint('community rebuild');
     return Scaffold(
-        appBar: AppBar(title: Text('Community Feed')),
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.white.withOpacity(0.6),
+          leadingWidth: 10,
+          titleSpacing: 5,
+          elevation: 0,
+          title: Padding(
+            padding: EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
+            child: Text(
+              "Feeds",
+              style: TextStyle(
+                  fontSize: 20 * dimensions.height / 632,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+            ),
+          ),
+          actions: [
+            GestureDetector(
+              onTap: () {},
+              child: Padding(
+                padding:
+                    EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
+                child: Container(
+                  padding:
+                      EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                  height: 30,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(30),
+                    color: Colors.pink[50],
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.add,
+                        color: Colors.pink,
+                        size: 20,
+                      ),
+                      SizedBox(
+                        width: 2,
+                      ),
+                      Text(
+                        "Add New",
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
         floatingActionButton: OpenContainer(
           transitionDuration: const Duration(milliseconds: 500),
           transitionType: ContainerTransitionType.fadeThrough,

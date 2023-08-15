@@ -76,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(CupertinoIcons.person_2_square_stack),
-                  label: '  Community',
+                  label: 'Feeds',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person_rounded),

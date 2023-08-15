@@ -46,8 +46,7 @@ class _BlogCardState extends State<BlogCard> {
         clipBehavior: Clip.hardEdge,
         margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
         color: Theme.of(context).cardTheme.color,
-        surfaceTintColor: Color.fromARGB(255, 248, 243, 243),
-        shadowColor: Colors.grey.shade300,
+        surfaceTintColor: Color.fromARGB(255, 255, 255, 255),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
