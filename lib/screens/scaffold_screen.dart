@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:on_ways/Networking/location.dart';
 import 'package:on_ways/authentication/login_google.dart';
 import 'package:on_ways/tabs/Chats.dart';
 import 'package:on_ways/tabs/Maps.dart';
@@ -19,6 +20,12 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {

@@ -99,6 +99,7 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
                                 .doc(widget.FeedId)
                                 .collection('comments')
                                 .add({
+                                  'image': user.image,
                                   'author': user.name,
                                   'content': _contentController.text,
                                   'time': DateTime.now(),

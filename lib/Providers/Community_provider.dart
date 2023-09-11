@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommunityPost {
   String id = '';
-  String title = '';
+
   String content = '';
   String city = '';
   DateTime date = DateTime.now();
@@ -14,15 +14,17 @@ class CommunityPost {
   String image_url = '';
   List<String> Likes = [];
   bool isLiked = false;
+  String author_img = '';
   CommunityPost(
       {required this.id,
-      required this.title,
+
       required this.content,
       required this.city,
       required this.date,
       required this.author,
       required this.image_url,
-      required this.Likes});
+      required this.Likes,
+      required this.author_img});
 }
 
 class ScreenArguments {

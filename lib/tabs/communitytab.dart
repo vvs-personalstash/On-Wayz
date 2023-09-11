@@ -49,63 +49,53 @@ class _CommunityTabState extends State<CommunityTab> {
             ),
           ),
           actions: [
-            GestureDetector(
-              onTap: () {},
-              child: Padding(
-                padding:
-                    EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
-                child: Container(
+            OpenContainer(
+              closedElevation: 0,
+              transitionDuration: const Duration(milliseconds: 500),
+              transitionType: ContainerTransitionType.fadeThrough,
+              closedColor: Theme.of(context).scaffoldBackgroundColor,
+              openColor: Colors.white, //const Color(0xFF16161e),
+              middleColor: const Color(0xFFd988a1),
+              closedBuilder: (context, action) => Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Padding(
                   padding:
-                      EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
-                  height: 30,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.pink[50],
-                  ),
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.add,
-                        color: Colors.pink,
-                        size: 20,
-                      ),
-                      SizedBox(
-                        width: 2,
-                      ),
-                      Text(
-                        "Add New",
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                      ),
-                    ],
+                      EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 10),
+                  child: Container(
+                    padding:
+                        EdgeInsets.only(left: 8, right: 8, top: 2, bottom: 2),
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.pink[50],
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.add,
+                          color: Colors.pink,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 2,
+                        ),
+                        Text(
+                          "Add New",
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
+              openBuilder: (context, action) => AddCommunityPostScreen(),
             ),
           ],
-        ),
-        floatingActionButton: OpenContainer(
-          transitionDuration: const Duration(milliseconds: 500),
-          transitionType: ContainerTransitionType.fadeThrough,
-          closedShape: const CircleBorder(),
-          closedColor: const Color(0xFF50559a),
-          openColor: Theme.of(context)
-              .scaffoldBackgroundColor, //const Color(0xFF16161e),
-          middleColor: const Color(0xFFd988a1),
-          closedBuilder: (context, action) => Container(
-            margin: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Color(0xFF50559a),
-            ),
-            child: const Icon(
-              Icons.add,
-              size: 25,
-              color: Color.fromARGB(255, 216, 216, 216),
-            ),
-          ),
-          openBuilder: (context, action) => AddCommunityPostScreen(),
         ),
         body: SafeArea(
             child: Column(children: [
@@ -124,15 +114,14 @@ class _CommunityTabState extends State<CommunityTab> {
                 List<BlogCard> FeedWidgets = [];
                 for (var data in postdata!) {
                   CommunityPost post = CommunityPost(
-                    id: data.id,
-                    Likes: List<String>.from(data['Likes']),
-                    author: data['author'],
-                    title: data['title'],
-                    date: data['time'].toDate(),
-                    city: data['location'],
-                    content: data['content'],
-                    image_url: data['img'],
-                  );
+                      id: data.id,
+                      Likes: List<String>.from(data['Likes']),
+                      author: data['author'],
+                      date: data['time'].toDate(),
+                      city: data['location'],
+                      content: data['content'],
+                      image_url: data['img'],
+                      author_img: data['author_img']);
                   final time = data['time'].toDate();
                   FeedWidgets.add(BlogCard(
                     receivedData: post,
@@ -143,11 +132,12 @@ class _CommunityTabState extends State<CommunityTab> {
                 }
                 return Expanded(
                   child: ListView(
+                    padding: EdgeInsets.only(bottom: 10),
                     children: FeedWidgets,
                     controller: scrollController,
                   ),
                 );
-              })
+              }),
         ])));
   }
 }
