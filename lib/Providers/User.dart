@@ -11,12 +11,11 @@ class Users with ChangeNotifier {
   String email = '';
   String name = '';
   String image = '';
-  int age = 0;
+  String age = '';
   String PhoneNumber = '';
   String UserName = '';
   GeoPoint Location = GeoPoint(0, 0);
   List<dynamic> chats_id = [];
-
   void updateDetails() async {
     final user = await FirebaseAuth.instance.currentUser;
     print(user);
@@ -24,6 +23,7 @@ class Users with ChangeNotifier {
     id = await user!.uid;
     email = user.email.toString();
     name = user.displayName.toString();
+    PhoneNumber = user.phoneNumber.toString();
 
     final docRef = _firestore.collection('User-Data').doc(id);
     try {
@@ -32,12 +32,12 @@ class Users with ChangeNotifier {
         dynamic data = snapshot.data();
         print(111);
         print(111);
-        PhoneNumber = data['phonenumber'];
         chats_id = data['chats_id'] ?? [];
         UserName = data['UserName'];
         age = data['age'];
         image = data['Photo'];
         Location = data['Last Location']['geopoint'];
+        print(1111);
         notifyListeners();
       } else {
         print("Document does not exist");

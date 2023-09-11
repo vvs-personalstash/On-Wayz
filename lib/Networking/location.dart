@@ -33,10 +33,10 @@ class Location with ChangeNotifier {
         return Future.error(
             'Location permissions are permanently denied, we cannot request permissions.');
       }
-
-      print('lmao');
+      print('lma0');
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
+
       print('location');
       print(position.latitude);
       latitudeoflocation = position.latitude;

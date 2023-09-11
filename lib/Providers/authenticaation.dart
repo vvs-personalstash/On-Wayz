@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:on_ways/utilities/snackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class GoogleSignInProvider extends ChangeNotifier {
   final googleSignin = GoogleSignIn();
@@ -33,9 +34,10 @@ class GoogleSignInProvider extends ChangeNotifier {
   Future googleLogout() async {
     final GoogleSignIn googleSignIn = GoogleSignIn();
     try {
+      await FirebaseAuth.instance.signOut();
+      await googleSignIn.disconnect();
       await googleSignIn.signOut();
-
-      FirebaseAuth.instance.signOut();
+      notifyListeners();
     } catch (e) {
       debugPrint(e.toString());
     }
