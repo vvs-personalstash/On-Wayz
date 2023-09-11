@@ -20,7 +20,8 @@ class FriendRequest extends StatelessWidget {
   Widget build(BuildContext context) {
     Users user = Provider.of<Users>(context, listen: false);
     return Container(
-      padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+      padding: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
+      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -62,7 +63,6 @@ class FriendRequest extends StatelessWidget {
                   size: 30,
                 )),
           ),
-          SizedBox(),
           GestureDetector(
             onTap: () {
               final _firestore = FirebaseFirestore.instance;
@@ -70,7 +70,8 @@ class FriendRequest extends StatelessWidget {
                   .collection('User-Data')
                   .doc(user.id)
                   .collection('Friends')
-                  .add({
+                  .doc(Id)
+                  .set({
                 'author': name,
                 'image': imageUrl,
                 'time': DateTime.now(),
@@ -79,7 +80,8 @@ class FriendRequest extends StatelessWidget {
                   .collection('User-Data')
                   .doc(Id)
                   .collection('Friends')
-                  .add({
+                  .doc(user.id)
+                  .set({
                 'author': user.name,
                 'image': user.image,
                 'time': DateTime.now(),
