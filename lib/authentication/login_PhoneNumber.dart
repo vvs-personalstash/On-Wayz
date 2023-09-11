@@ -18,12 +18,14 @@ class PhoneAuthForm extends StatefulWidget {
 class _MyPhoneState extends State<PhoneAuthForm> {
   TextEditingController countryController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  bool isclicked = false;
 
   @override
   @override
   Widget build(BuildContext context) {
     User user = FirebaseAuth.instance.currentUser!;
     String countrycode = '+91';
+
     return Scaffold(
       body: Container(
         margin: EdgeInsets.only(left: 25, right: 25),
@@ -91,34 +93,39 @@ class _MyPhoneState extends State<PhoneAuthForm> {
                 width: double.infinity,
                 height: 45,
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () async {
-                      await FirebaseAuth.instance.verifyPhoneNumber(
-                          verificationCompleted:
-                              (PhoneAuthCredential credential) async {
-                            if (credential.smsCode != null) {
-                              try {
-                                UserCredential credential1 =
-                                    await user!.linkWithCredential(credential);
-                              } on FirebaseAuthException catch (e) {
-                                print(e);
-                              }
+                  style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10))),
+                  onPressed: () async {
+                    await FirebaseAuth.instance.verifyPhoneNumber(
+                        verificationCompleted:
+                            (PhoneAuthCredential credential) async {
+                          if (credential.smsCode != null) {
+                            try {
+                              UserCredential credential1 =
+                                  await user!.linkWithCredential(credential);
+                            } on FirebaseAuthException catch (e) {
+                              print(e);
                             }
-                          },
-                          verificationFailed: _onVerificationFailed,
-                          codeSent:
-                              (String verificationId, int? ResendingToken) {
-                            PhoneAuthForm.verify = verificationId;
-                            Navigator.pushNamed(context, MyVerify.routename);
-                          },
-                          phoneNumber: '$countrycode${phoneController.text}',
-                          codeAutoRetrievalTimeout: (String verificationId) {
-                            return null;
-                          });
-                    },
-                    child: Text("Send the code")),
+                          }
+                        },
+                        verificationFailed: _onVerificationFailed,
+                        codeSent: (String verificationId, int? ResendingToken) {
+                          PhoneAuthForm.verify = verificationId;
+                          Navigator.pushNamed(context, MyVerify.routename);
+                        },
+                        phoneNumber: '$countrycode${phoneController.text}',
+                        codeAutoRetrievalTimeout: (String verificationId) {
+                          return null;
+                        });
+                  },
+                  child: isclicked == false
+                      ? Text("Send the code")
+                      : Container(
+                          child: CircularProgressIndicator(color: Colors.white),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 5, horizontal: 20)),
+                ),
               )
             ],
           ),

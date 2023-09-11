@@ -55,6 +55,10 @@ dependencies:
   pinput: ^3.0.0
   custom_marker: ^1.0.0
   cache_manager: ^1.0.0+4
+  flutter_onboarding_slider: ^1.0.10
+  adaptive_dialog: ^1.9.0
+
+
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +85,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - Assets/background.jpg
+    - Assets/background1.jpg
+    - Assets/slide_4.jpg
+    - Assets/slide_3.png
+    - Assets/slide_1.jpg
+    - Assets/slide_2.jpg
+    - Assets/google.png
     - .env
   #   - images/a_dot_ham.jpeg
 
@@ -95,17 +105,5 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

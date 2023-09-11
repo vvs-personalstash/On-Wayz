@@ -140,10 +140,12 @@ class _SignUpPageState extends State<SignUpPage> {
                                 child: Container(
                                     height: 20,
                                     width: 100,
-                                    child: Text(
-                                      'Tap for Location',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 12),
+                                    child: Center(
+                                      child: Text(
+                                        'Tap for Location',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 10),
+                                      ),
                                     ))),
                           )
                         ],
@@ -169,7 +171,6 @@ class _SignUpPageState extends State<SignUpPage> {
                               "location": GeoPoint(location.latitudeoflocation!,
                                   location.longitudeoflocation!),
                               "age": Age.text,
-                              'Friends': [],
                             };
                             db
                                 .collection("User-Data")
@@ -180,7 +181,8 @@ class _SignUpPageState extends State<SignUpPage> {
                             //     : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTHp7HDUzfrraXrobnp_eKUtNeFiq9E8NklA&usqp=CAU');
                             await user.updateDisplayName(nameController.text);
                             if (!context.mounted) return;
-                            context.read<Users>().updateDetails();
+                            Provider.of<Users>(context, listen: false)
+                                .updateDetails();
                             Navigator.pushNamedAndRemoveUntil(context,
                                 HomeScreen.routename, (route) => false);
                           }),

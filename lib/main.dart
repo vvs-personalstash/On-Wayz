@@ -6,7 +6,11 @@ import 'package:on_ways/authentication/login_PhoneNumber.dart';
 import 'package:on_ways/authentication/otp.dart';
 import 'package:on_ways/authentication/register.dart';
 import 'package:on_ways/screens/blogscreen.dart';
+import 'package:on_ways/screens/chatscreen.dart';
+import 'package:on_ways/screens/editProfile_screen.dart';
 import 'package:on_ways/screens/scaffold_screen.dart';
+import 'package:on_ways/walkthrough/splash_screen.dart';
+import 'package:on_ways/walkthrough/walkthrough.dart';
 import 'authentication/login_google.dart';
 import 'screens/loading.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -86,13 +90,14 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               textTheme:
-                  GoogleFonts.nunitoTextTheme(ThemeData.light().textTheme),
+                  GoogleFonts.interTextTheme(ThemeData.light().textTheme),
               iconTheme: const IconThemeData(
                 color: Color(0xFF1d2d59),
               ),
             ),
             routes: {
-              '/': (context) => LoadingScreen(),
+              '/': (context) => MyCustomSplashScreen(),
+              LoadingScreen.routename: (context) => LoadingScreen(),
               LoginPage.routename: (context) => const LoginPage(),
               SignUpPage.routename: (context) => SignUpPage(),
               HomeScreen.routename: (context) => const HomeScreen(),
@@ -100,6 +105,8 @@ class MyApp extends StatelessWidget {
               BlogScreen.routeName: (context) => BlogScreen(),
               PhoneAuthForm.routename: (context) => PhoneAuthForm(),
               MyVerify.routename: (context) => MyVerify(),
+              ChatScreen.id: (context) => ChatScreen(),
+              WalkThroughScreen.routename: (context) => WalkThroughScreen(),
             },
           ));
 }
