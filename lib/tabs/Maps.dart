@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:ui' as ui;
-import 'dart:typed_data';
 
 import 'package:on_ways/Networking/location.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +26,12 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     //loadData();
     super.initState();
-    Location().getCurrentLocation();
+    Initialize();
+  }
+
+  Future<void> Initialize() async {
+    await Location().getCurrentLocation();
+    print(1);
     _getUserLocation();
   }
 
@@ -154,9 +157,16 @@ class _MapScreenState extends State<MapScreen> {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
+                      insetPadding:
+                          EdgeInsets.symmetric(horizontal: 80, vertical: 30),
+                      clipBehavior: Clip.hardEdge,
+                      titlePadding: EdgeInsets.only(
+                          top: 20, bottom: 5, left: 20, right: 5),
+                      actionsAlignment: MainAxisAlignment.start,
+                      actionsPadding: EdgeInsets.only(left: 5, right: 0),
                       title: Container(
-                        width: 150,
-                        height: 70,
+                        width: 50,
+                        height: 150,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -188,39 +198,39 @@ class _MapScreenState extends State<MapScreen> {
                                   .textTheme
                                   .bodyMedium!
                                   .copyWith(
-                                      color: Color.fromARGB(255, 10, 10, 10),
+                                      color: Color.fromARGB(97, 75, 74, 74),
                                       fontSize: 15,
                                       fontStyle: FontStyle.italic),
-                            )
+                            ),
+                            SizedBox(height: 10),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromRGBO(25, 28, 77, 1),
+                                ),
+                                onPressed: () {
+                                  Users user = Provider.of<Users>(context,
+                                      listen: false);
+                                  final _firestore = FirebaseFirestore.instance;
+                                  _firestore
+                                      .collection('User-Data')
+                                      .doc(userid)
+                                      .collection('Requests')
+                                      .add({
+                                        'author': user.name,
+                                        'image': user.image,
+                                        'time': DateTime.now(),
+                                      })
+                                      .then((value) => print("Request Added"))
+                                      .catchError((error) => print(
+                                          "Failed to send Request: $error"));
+
+                                  Navigator.pop(context, 'Request sent');
+                                },
+                                child: const Text('Send Request'))
                           ],
                         ),
                       ),
-                      actions: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color.fromRGBO(25, 28, 77, 1),
-                            ),
-                            onPressed: () {
-                              Users user =
-                                  Provider.of<Users>(context, listen: false);
-                              final _firestore = FirebaseFirestore.instance;
-                              _firestore
-                                  .collection('User-Data')
-                                  .doc(userid)
-                                  .collection('Requests')
-                                  .add({
-                                    'author': user.name,
-                                    'image': user.image,
-                                    'time': DateTime.now(),
-                                  })
-                                  .then((value) => print("Comment Added"))
-                                  .catchError((error) =>
-                                      print("Failed to add Comment: $error"));
-
-                              Navigator.pop(context, 'Request sent');
-                            },
-                            child: const Text('Send Request'))
-                      ],
                     ),
                   ).then((value) => {
                         if (value != null)
@@ -240,9 +250,11 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
+  var db = FirebaseFirestore.instance;
   LatLng initialLocation = const LatLng(37.422131, -122.084801);
   @override
   Widget build(BuildContext context) {
+    Users user = Provider.of<Users>(context, listen: false);
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -251,6 +263,21 @@ class _MapScreenState extends State<MapScreen> {
         leadingWidth: 70,
         elevation: 0,
         leading: GestureDetector(
+          onTap: () async {
+            await Location().getCurrentLocation();
+            final geo = GeoFlutterFire();
+            Location location = Provider.of(context, listen: false);
+            GeoFirePoint myLocation = geo.point(
+                latitude: location.latitudeoflocation!,
+                longitude: location.longitudeoflocation!);
+            db
+                .collection("User-Data")
+                .doc(user.id)
+                .update({"Last Location": myLocation.data}).then(
+                    (value) => print("Location successfully updated!"),
+                    onError: (e) => print("Error updating Location $e"));
+            setState(() {});
+          },
           child: Container(
             decoration: BoxDecoration(
                 color: Colors.pink.shade300,
@@ -326,26 +353,26 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 }
-  // loadData() async {
-  //   {
-  //  Uint8List image = await loadNetworkImage(['url']);
-  // final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
-  //     image.buffer.asUint8List(),
-  //     targetHeight: 150,
-  //     targetWidth: 150);
-  // final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
-  // final ByteData? byteData =
-  //     await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
-  // final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
+// loadData() async {
+//   {
+//  Uint8List image = await loadNetworkImage(['url']);
+// final ui.Codec markerImageCodec = await ui.instantiateImageCodec(
+//     image.buffer.asUint8List(),
+//     targetHeight: 150,
+//     targetWidth: 150);
+// final ui.FrameInfo frameInfo = await markerImageCodec.getNextFrame();
+// final ByteData? byteData =
+//     await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);
+// final Uint8List resizedImageMarker = byteData!.buffer.asUint8List();
 
-  //     _marker.add(Marker(
-  //         markerId: MarkerId(),
-  //         icon: BitmapDescriptor.fromBytes(resizedImageMarker),
-  //         position: LatLng(
-  //           element['lat'],
-  //           element['lon'],
-  //         ),
-  //         infoWindow: InfoWindow(title: element["title"])));
-  //   }
-  //   setState(() {});
-  // }
+//     _marker.add(Marker(
+//         markerId: MarkerId(),
+//         icon: BitmapDescriptor.fromBytes(resizedImageMarker),
+//         position: LatLng(
+//           element['lat'],
+//           element['lon'],
+//         ),
+//         infoWindow: InfoWindow(title: element["title"])));
+//   }
+//   setState(() {});
+// }
