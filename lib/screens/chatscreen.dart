@@ -200,6 +200,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     );
                   }
+                  first_message = false;
                   scrollToBottom();
                   final messages = snapshot.data?.docs;
                   List<MessageBubble> messageWidgets = [];
